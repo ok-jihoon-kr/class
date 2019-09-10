@@ -59,21 +59,20 @@ public class BoardDao {
 		try {
 			con = DBManager.getConnection();
 			
-			sb.append("INSERT INTO board (num, username, passwd, subject, content, filename, readcount, ip, reg_date, re_ref, re_lev, re_seq) ");
-			sb.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			sb.append("INSERT INTO board (num, username, passwd, subject, content, readcount, ip, reg_date, re_ref, re_lev, re_seq) ");
+			sb.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			pstmt = con.prepareStatement(sb.toString());
 			pstmt.setInt(1, boardVO.getNum());
 			pstmt.setString(2, boardVO.getUsername());
 			pstmt.setString(3, boardVO.getPasswd());
 			pstmt.setString(4, boardVO.getSubject());
 			pstmt.setString(5, boardVO.getContent());
-			pstmt.setString(6, boardVO.getFilename());
-			pstmt.setInt(7, boardVO.getReadcount());
-			pstmt.setString(8, boardVO.getIp());
-			pstmt.setTimestamp(9, boardVO.getRegDate());
-			pstmt.setInt(10, boardVO.getReRef());
-			pstmt.setInt(11, boardVO.getReLev());
-			pstmt.setInt(12, boardVO.getReSeq());
+			pstmt.setInt(6, boardVO.getReadcount());
+			pstmt.setString(7, boardVO.getIp());
+			pstmt.setTimestamp(8, boardVO.getRegDate());
+			pstmt.setInt(9, boardVO.getReRef());
+			pstmt.setInt(10, boardVO.getReLev());
+			pstmt.setInt(11, boardVO.getReSeq());
 			// 실행
 			pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -242,7 +241,6 @@ public class BoardDao {
 				boardVO.setPasswd(rs.getString("passwd"));
 				boardVO.setSubject(rs.getString("subject"));
 				boardVO.setContent(rs.getString("content"));
-				boardVO.setFilename(rs.getString("filename"));
 				boardVO.setReadcount(rs.getInt("readcount"));
 				boardVO.setIp(rs.getString("ip"));
 				boardVO.setRegDate(rs.getTimestamp("reg_date"));
@@ -403,7 +401,6 @@ public class BoardDao {
 				boardVO.setPasswd(rs.getString("passwd"));
 				boardVO.setSubject(rs.getString("subject"));
 				boardVO.setContent(rs.getString("content"));
-				boardVO.setFilename(rs.getString("filename"));
 				boardVO.setReadcount(rs.getInt("readcount"));
 				boardVO.setIp(rs.getString("ip"));
 				boardVO.setRegDate(rs.getTimestamp("reg_date"));
@@ -548,8 +545,8 @@ num    subject              reRef     reLev   [reSeq]
 			
 			
 			// 답글 insert   re_ref그대로  re_lev+1  re_seq+1
-			sql  = "INSERT INTO board (num, username, passwd, subject, content, filename, readcount, ip, reg_date, re_ref, re_lev, re_seq) ";
-			sql += " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			sql  = "INSERT INTO board (num, username, passwd, subject, content, readcount, ip, reg_date, re_ref, re_lev, re_seq) ";
+			sql += " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, boardVO.getNum());
@@ -557,29 +554,26 @@ num    subject              reRef     reLev   [reSeq]
 			pstmt.setString(3, boardVO.getPasswd());
 			pstmt.setString(4, boardVO.getSubject());
 			pstmt.setString(5, boardVO.getContent());
-			pstmt.setString(6, boardVO.getFilename());
-			pstmt.setInt(7, boardVO.getReadcount()); // 조회수
-			pstmt.setString(8, boardVO.getIp());
-			pstmt.setTimestamp(9, boardVO.getRegDate());
-			pstmt.setInt(10, boardVO.getReRef()); // 그대로
-			pstmt.setInt(11, boardVO.getReLev() + 1); // re_lev+1
-			pstmt.setInt(12, boardVO.getReSeq() + 1); // re_seq+1
+			pstmt.setInt(6, boardVO.getReadcount()); // 조회수
+			pstmt.setString(7, boardVO.getIp());
+			pstmt.setTimestamp(8, boardVO.getRegDate());
+			pstmt.setInt(9, boardVO.getReRef()); // 그대로
+			pstmt.setInt(10, boardVO.getReLev() + 1); // re_lev+1
+			pstmt.setInt(11, boardVO.getReSeq() + 1); // re_seq+1
 			// 실행
 			pstmt.executeUpdate(); // insert문 실행
 			
 			// commit 실행
 			con.commit();
 			
-			// 기본설정인 auto commit으로 설정 되돌리기 
+			// 기본설정인 auto commit으로 설정 되돌리기
 			con.setAutoCommit(true);
 			
 		} catch (Exception e) {
-		
 			e.printStackTrace();
 			try {
-				con.rollback();  // 실행중 예외발생 시 롤백처리 
+				con.rollback(); // 실행중 예외발생 시 롤백처리
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} finally {
