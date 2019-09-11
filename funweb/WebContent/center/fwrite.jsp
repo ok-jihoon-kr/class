@@ -74,7 +74,10 @@ if (id == null) { // 로그인 안했을때
 	<tr>
 		<th class="twrite">파일</th>
 		<td class="left">
-			<input type="file" name="filename">
+			<div id="file_container">
+				<input type="file" name="filename1">
+			</div>
+			<button type="button" onclick="addFileElement();">파일 추가</button>
 		</td>
 	</tr>
 	<tr>
@@ -101,6 +104,23 @@ if (id == null) { // 로그인 안했을때
     <!-- 푸터 영역 -->
 	<jsp:include page="../include/footer.jsp" />
 </div>
+
+<script>
+var num = 2;
+function addFileElement() {
+	if(num > 5){
+		alert('최대 5개 까지만 가능');
+		return;
+	}
+	// div 요소에 file타입 input 요소를 추가하기
+	var input = '<br><input type="file" name="filename' + num + '">';
+	num++; // 다음번 추가를 위해 값을 1증가 
+	// id속성값이 file_container인 div요소의 참조 구하기
+	var fileContainer = document.getElementById('file_container');
+	fileContainer.innerHTML += input;		
+}
+</script>
+
 
 </body>
 </html>   

@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@page import="com.exam.vo.AttachVO"%>
 <%@page import="com.exam.dao.AttachDao"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -39,7 +40,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분");
 // AttachDao 객체 준비 
 AttachDao attachDao = AttachDao.getInstance();
 // 글 번호에 해당하는 첨부파일정보 가져오기
-AttachVO attachVO = attachDao.getAttach(num);
+List<AttachVO> attachList = attachDao.getAttaches(num);
 
 
 
@@ -81,16 +82,16 @@ AttachVO attachVO = attachDao.getAttach(num);
 		<th class="twrite">파일</th>
 		<td class="left" colspan="3">
 			<%
-			if(attachVO != null){
+			for(AttachVO attachVO: attachList){
 			if (attachVO.getFiletype().equals("I")) { // 이미지 타입
 				%>
-				<a href="../upload/<%=attachVO.getFilename() %>">
+				<a href="../upload/<%=attachVO.getFilename() %>" >
 					<img src="../upload/<%=attachVO.getFilename() %>" width="50" height="50">
 				</a>
 				<%
 			} else {
 				%>
-				<a href="../upload/<%=attachVO.getFilename() %>">
+				<a href="../upload/<%=attachVO.getFilename() %>" download>
 					<%=attachVO.getFilename() %>
 				</a>
 				<%
@@ -125,7 +126,7 @@ AttachVO attachVO = attachDao.getAttach(num);
 	function checkDelete(){
 		var result = confirm('<%=boardVO.getNum()%>번 글을 정말로 삭제하시겠습니까?');
 		if(result == true){
-			location.href = 'delete.jsp?num=<%=boardVO.getNum()%>&pageNum=<%=pageNum%>';	
+			location.href = 'fdelete.jsp?num=<%=boardVO.getNum()%>&pageNum=<%=pageNum%>';	
 		}
 		
 		

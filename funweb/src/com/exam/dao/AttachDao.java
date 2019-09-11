@@ -3,6 +3,8 @@ package com.exam.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.exam.vo.AttachVO;
 import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
@@ -47,8 +49,9 @@ public class AttachDao {
 	}
 	
 	// 글번호에 해당하는 첨부파일정보 가져오기 
-	public AttachVO getAttach(int bno) {
-		AttachVO attachVO = null;
+	public List<AttachVO> getAttaches(int bno) {
+		
+		List<AttachVO> list = new ArrayList<AttachVO>();
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -63,13 +66,16 @@ public class AttachDao {
 			
 			rs = pstmt.executeQuery();
 			
-			if(rs.next()) {
+			while(rs.next()) {
+				AttachVO attachVO = new AttachVO();
+				
 				attachVO = new AttachVO();
 				attachVO.setBno(rs.getInt("bno"));
 				attachVO.setUuid(rs.getString("uuid"));
 				attachVO.setFilename(rs.getString("filename"));
 				attachVO.setFiletype(rs.getString("filetype"));
 				
+				list.add(attachVO);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -77,8 +83,41 @@ public class AttachDao {
 		} finally {
 			DBManager.close(con, pstmt, rs);
 		}
-		return attachVO;
+		return list;
 	}
+	
+	// 게시판 글번호에 해당하는 첨부파일정보 삭제하는 메소드
+	public void deleteAttach(int bno){
+		Connection con =null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = DBManager.getConnection();
+			String sql = "DELETE FROM attach WHERE bno = ? ";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, bno);
+			// 실행
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			DBManager.close(con, pstmt);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

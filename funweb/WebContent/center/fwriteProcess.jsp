@@ -1,3 +1,4 @@
+<%@page import="java.util.Enumeration"%>
 <%@page import="com.exam.dao.AttachDao"%>
 <%@page import="java.nio.file.Files"%>
 <%@page import="java.io.File"%>
@@ -71,44 +72,89 @@ boardDao.insertBoard(boardVO);
 
 //====================첨부파일 등록 처리 시작===================
 
-// 업로드한 원본 파일이름  a.ppt
+/* // 업로드한 원본 파일이름  a.ppt
 String originalFileName = multi.getOriginalFileName("filename");
 System.out.println("originalFileName : " + originalFileName);
 
 // 실제로 업로드된 파일이름  a1.ppt
 String realFileName = multi.getFilesystemName("filename");
 System.out.println("realFileName : " + realFileName);
+ */
 
-
-// 자바빈 AttachVO 객체 생성
-AttachVO attachVO = new AttachVO();
-
-UUID uuid = UUID.randomUUID();
-attachVO.setUuid(uuid.toString());
-attachVO.setFilename(realFileName); // 실제 생성된 파일이름
-attachVO.setBno(num); // 게시글 번호 
-// 이미지 파일여부 확인 
-File file = new File(realPath, realFileName);
-String contentType = Files.probeContentType(file.toPath());
-boolean isImage = contentType.startsWith("image");
-
-if(isImage){
-	attachVO.setFiletype("I"); // Image File
-} else {
-	attachVO.setFiletype("O"); // Other
+// Enumeration 열거형, file의 파라미터 이름들을 가짐
+// 자바의 Iterator와 사용방법이 동일함 
+Enumeration<String> enu = multi.getFileNames();
+while(enu.hasMoreElements()){ // 다음요소가 있으면
+	String str = enu.nextElement();
+	System.out.println(str);
+	
+	// 실제로 업로드된 파일이름 구하기
+	// 해당 파라미터 이름을 업로드에 사용 안했으면 null이 리턴한다 
+	String realFileName = multi.getFilesystemName(str);
+	if(realFileName != null){
+		
+		// 자바빈 AttachVO 객체 생성
+		AttachVO attachVO = new AttachVO();
+		
+		UUID uuid = UUID.randomUUID();
+		attachVO.setUuid(uuid.toString());
+		attachVO.setFilename(realFileName); // 실제 생성된 파일이름
+		attachVO.setBno(num); // 게시글 번호 
+		
+		
+		
+		// 이미지 파일여부 확인 
+		File file = new File(realPath, realFileName);
+		String contentType = Files.probeContentType(file.toPath());
+		boolean isImage = contentType.startsWith("image");
+		if(isImage){
+			attachVO.setFiletype("I"); // Image File
+		} else {
+			attachVO.setFiletype("O"); // Other
+		}
+		
+		
+		
+		// AttachDao 준비 
+		AttachDao attachDao = AttachDao.getInstance();
+		// 첨부파일정보 한개 등록하는 메소드 호출 
+		attachDao.insertAttach(attachVO);
+	}
 }
-
-// AttachDao 준비 
-AttachDao attachDao = AttachDao.getInstance();
-// 첨부파일정보 한개 등록하는 메소드 호출 
-attachDao.insertAttach(attachVO);
-
-
-
-
+ 
+/* //파일업로드 여부확인, 업로드 했으면 이렇게 적용 
+if(realFileName != null){
+	// 자바빈 AttachVO 객체 생성
+	AttachVO attachVO = new AttachVO();
+	
+	UUID uuid = UUID.randomUUID();
+	attachVO.setUuid(uuid.toString());
+	attachVO.setFilename(realFileName); // 실제 생성된 파일이름
+	attachVO.setBno(num); // 게시글 번호 
+	
+	
+	
+	// 이미지 파일여부 확인 
+	File file = new File(realPath, realFileName);
+	String contentType = Files.probeContentType(file.toPath());
+	boolean isImage = contentType.startsWith("image");
+	if(isImage){
+		attachVO.setFiletype("I"); // Image File
+	} else {
+		attachVO.setFiletype("O"); // Other
+	}
+	
+	
+	
+	// AttachDao 준비 
+	AttachDao attachDao = AttachDao.getInstance();
+	// 첨부파일정보 한개 등록하는 메소드 호출 
+	attachDao.insertAttach(attachVO);
+}//파일업로드 여부확인
+*/
 //====================첨부파일 등록 처리 종료====================
 
 // 이동 fnotice.jsp 
-response.sendRedirect("fnotice.jsp");
+response.sendRedirect("fnotice.jsp"); 
 
 %>
